@@ -7,6 +7,9 @@ public class Weapon: XRGrabInteractable, IWeaponActions
 {
     [SerializeField] private Transform barrelLocation;
     [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private GameObject muzzleFlashPrefab;
+    [SerializeField] private AudioSource shootAudioSource;
+    
     public long ID;
     public int ShotPower
     {
@@ -16,10 +19,21 @@ public class Weapon: XRGrabInteractable, IWeaponActions
             if (value > 0) _shotPower = value;
         }
     }
+    public float ValueToFire {
+        get { return _valueToFire; }
+        set
+        {
+            if (value > 0 && value < 1) _valueToFire = value;
+        }
+    }
 
+    private string _pressTriggerName = "PressTrigger";
+    private string _fireName = "Fire";
+    private float _valueToFire = 0.9f;
     private int _shotPower = 5000;
     private bool _isReadyToFire;
     private Animator _gunAnimator;
+    private bool _isNextShotReady = true;
 
     private void Start()
     {
@@ -35,7 +49,11 @@ public class Weapon: XRGrabInteractable, IWeaponActions
         if (updatePhase == XRInteractionUpdateOrder.UpdatePhase.Dynamic)
         {
             if (isSelected) 
-                PullTheTrigger();
+                if (firstInteractorSelecting is XRBaseControllerInteractor interactor)
+                {
+                    InteractionState activateState = interactor.xrController.activateInteractionState;
+                    PressTheTrigger(activateState.value);
+                }
         }
     } 
 
@@ -43,18 +61,44 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     {
         if (_isReadyToFire)
         {
+            SpawnMuzzleFlash();
+            PlaySound(shootAudioSource);
             GameObject bullet = Instantiate(bulletPrefab, barrelLocation.position, Quaternion.identity);
             bullet.GetComponent<Rigidbody>().AddForce(barrelLocation.forward * _shotPower);
         }
     }
-    
-    public void PullTheTrigger()
+
+    private void PlaySound(AudioSource audioSource)
     {
-        if (firstInteractorSelecting is XRBaseControllerInteractor interactor)
+        if (audioSource)
+            audioSource.Play();
+    }
+    
+    private void SpawnMuzzleFlash()
+    {
+        if (muzzleFlashPrefab)
         {
-            InteractionState activateState = interactor.xrController.activateInteractionState;
-            _gunAnimator.SetFloat("PullTrigger", activateState.value);
+            GameObject flash = Instantiate(muzzleFlashPrefab, barrelLocation.position,  barrelLocation.rotation);
+            Destroy(flash, 0.1f);
+        }
+    }
+    
+    // Rewrite this, split function responsability
+    public void PressTheTrigger(float triggerValue)
+    {
+        
+        _gunAnimator.SetFloat(_pressTriggerName, triggerValue);
+        
+        if (triggerValue >= _valueToFire && _isNextShotReady)
+        {
+            _gunAnimator.SetTrigger(_fireName);
             Shoot();
+            _isNextShotReady = false;
+        }
+
+        if (triggerValue < _valueToFire && !_isNextShotReady) // Check release trigger
+        {
+            _isNextShotReady = true;
         }
     }
 
