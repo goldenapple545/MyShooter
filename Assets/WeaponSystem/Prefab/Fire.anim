@@ -20,12 +20,12 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: {x: -89.98, y: 0, z: 0}
-        inSlope: {x: -31.623568, y: 0, z: 0}
-        outSlope: {x: -31.623568, y: 0, z: 0}
+        inSlope: {x: -10.732894, y: 0, z: 0}
+        outSlope: {x: -10.732894, y: 0, z: 0}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
-        outWeight: {x: 0.316892, y: 0.33333334, z: 0.33333334}
+        outWeight: {x: 0.16832815, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 1
         value: {x: -93.697, y: 0, z: 0}
@@ -55,12 +55,12 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: {x: -0.00000011920914, y: 2.9763138, z: 2.3774436}
-        inSlope: {x: 0, y: 0, z: -15.672434}
-        outSlope: {x: 0, y: 0, z: -15.672434}
+        inSlope: {x: 0, y: 0, z: -6.6737475}
+        outSlope: {x: 0, y: 0, z: -6.6737475}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
-        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.08268396}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.11052062}
       - serializedVersion: 3
         time: 1
         value: {x: -0.00000011920914, y: 2.9763138, z: 0.594}
@@ -250,12 +250,12 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: 2.3774436
-        inSlope: -15.672434
-        outSlope: -15.672434
+        inSlope: -6.6737475
+        outSlope: -6.6737475
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
-        outWeight: 0.08268396
+        outWeight: 0.11052062
       - serializedVersion: 3
         time: 1
         value: 0.594
@@ -398,12 +398,12 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: -89.98
-        inSlope: -31.623568
-        outSlope: -31.623568
+        inSlope: -10.732894
+        outSlope: -10.732894
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
-        outWeight: 0.316892
+        outWeight: 0.16832815
       - serializedVersion: 3
         time: 1
         value: -93.697
@@ -536,4 +536,11 @@ AnimationClip:
     script: {fileID: 0}
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 1
+    functionName: EjectCase
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

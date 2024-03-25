@@ -1419,7 +1419,7 @@ GameObject:
   - component: {fileID: 1287372767}
   - component: {fileID: 1287372768}
   m_Layer: 0
-  m_Name: ShootSound
+  m_Name: Shoot_Sound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2045,9 +2045,12 @@ MonoBehaviour:
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
   barrelLocation: {fileID: 289932885}
+  shellLocation: {fileID: 1827741865}
   bulletPrefab: {fileID: 6713387753249019127, guid: 97b9a65e313ede747b713eecfb11cb09,
     type: 3}
   muzzleFlashPrefab: {fileID: 6939224103061523282, guid: 86252355c9e771e42ad5e72b70265f02,
+    type: 3}
+  casePrefab: {fileID: 7648517129408395770, guid: 37bf4206be4ef4e4fa1c4941d0a05b76,
     type: 3}
   shootAudioSource: {fileID: 1287372768}
   ID: 0
@@ -2068,6 +2071,7 @@ Transform:
   - {fileID: 871334265}
   - {fileID: 927145409}
   - {fileID: 1287372767}
+  - {fileID: 1827741865}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2637,6 +2641,37 @@ MonoBehaviour:
     m_Reference: {fileID: -1636515391019944688, guid: c348712bda248c246b8c49b3db54643f,
       type: 3}
   m_ButtonPressPoint: 0.5
+--- !u!1 &1827741864
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1827741865}
+  m_Layer: 0
+  m_Name: Shell_Location
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1827741865
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1827741864}
+  m_LocalRotation: {x: -0, y: -0, z: -0.3498514, w: 0.93680525}
+  m_LocalPosition: {x: 0.0069, y: 0.0878, z: 0.0324}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1554993232}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -40.956}
 --- !u!1001 &1902845047
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3011,6 +3046,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1554993232}
     m_Modifications:
+    - target: {fileID: 3506466842875843856, guid: 87d57f9ec97f00c4eab43d365945b0e9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3557204647640125211, guid: 87d57f9ec97f00c4eab43d365945b0e9,
         type: 3}
       propertyPath: m_LocalPosition.x

@@ -5,9 +5,12 @@ using UnityEngine.XR.Interaction.Toolkit;
 [Serializable]
 public class Weapon: XRGrabInteractable, IWeaponActions
 {
+    [Header("Weapon Settings")]
     [SerializeField] private Transform barrelLocation;
+    [SerializeField] private Transform shellLocation;
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameObject muzzleFlashPrefab;
+    [SerializeField] private GameObject casePrefab;
     [SerializeField] private AudioSource shootAudioSource;
     
     public long ID;
@@ -31,6 +34,8 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     private string _fireName = "Fire";
     private float _valueToFire = 0.9f;
     private int _shotPower = 5000;
+    private int _caseEjectPower = 100;
+    private bool _canEjectCase = true;
     private bool _isReadyToFire;
     private Animator _gunAnimator;
     private bool _isNextShotReady = true;
@@ -52,7 +57,7 @@ public class Weapon: XRGrabInteractable, IWeaponActions
                 if (firstInteractorSelecting is XRBaseControllerInteractor interactor)
                 {
                     InteractionState activateState = interactor.xrController.activateInteractionState;
-                    PressTheTrigger(activateState.value);
+                    CheckPressingTrigger(activateState.value);
                 }
         }
     } 
@@ -82,9 +87,19 @@ public class Weapon: XRGrabInteractable, IWeaponActions
             Destroy(flash, 0.1f);
         }
     }
+
+    private void EjectCase()
+    {
+        if (casePrefab)
+        {
+            GameObject shell = Instantiate(casePrefab, shellLocation.position,  shellLocation.rotation);
+            shell.GetComponent<Rigidbody>().AddForce(shellLocation.up * _caseEjectPower);
+            Destroy(shell, 5f);
+        }
+    }
     
     // Rewrite this, split function responsability
-    public void PressTheTrigger(float triggerValue)
+    public void CheckPressingTrigger(float triggerValue)
     {
         
         _gunAnimator.SetFloat(_pressTriggerName, triggerValue);
