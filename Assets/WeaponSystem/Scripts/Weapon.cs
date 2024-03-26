@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.XR.Interaction.Toolkit;
 
 [Serializable]
@@ -11,7 +12,15 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameObject muzzleFlashPrefab;
     [SerializeField] private GameObject casePrefab;
-    [SerializeField] private AudioSource shootAudioSource;
+    
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip shootSound;
+    [SerializeField] private AudioClip insertMagazineSound;
+    [SerializeField] private AudioClip pullOutMagazineSound;
+    [SerializeField] private AudioClip noAmmoSound;
+    [SerializeField] private AudioClip slideOpenSound;
+    [SerializeField] private AudioClip slideCloseSound;
     
     public long ID;
     public XRBaseInteractor magazineSocket;
@@ -31,21 +40,20 @@ public class Weapon: XRGrabInteractable, IWeaponActions
         }
     }
 
-    private Magazine magazine;
+    private IMagazine _magazine;
     private string _pressTriggerName = "PressTrigger";
     private string _fireName = "Fire";
     private float _valueToFire = 0.9f;
     private int _shotPower = 5000;
     private int _caseEjectPower = 100;
     private bool _canEjectCase = true;
-    private bool _isReadyToFire;
+    private bool _isSlideCock = false;
     private Animator _gunAnimator;
-    private bool _isNextShotReady = true;
+    private bool _isOneClickMade = true;
 
     private void Start()
     {
         _gunAnimator = gameObject.GetComponent<Animator>();
-        _isReadyToFire = true;
         
         magazineSocket.onSelectEnter.AddListener(AddMagazine);
         magazineSocket.onSelectExit.AddListener(RemoveMagazine);
@@ -68,26 +76,31 @@ public class Weapon: XRGrabInteractable, IWeaponActions
 
     public bool IsReadyToFire()
     {
-        return magazine && magazine.GetNumberOfBullets() > 0;
+        return _magazine != null && _magazine.GetNumberOfBullets() > 0 && _isSlideCock;
     }
 
     public void Shoot()
     {
         if (IsReadyToFire())
         {
+            _gunAnimator.SetTrigger(_fireName);
             SpawnMuzzleFlash();
-            PlaySound(shootAudioSource);
-            magazine.SubstractOneBullet();
+            PlaySound(shootSound);
+            _magazine.SubstractOneBullet();
             
             GameObject bullet = Instantiate(bulletPrefab, barrelLocation.position, Quaternion.identity);
             bullet.GetComponent<Rigidbody>().AddForce(barrelLocation.forward * _shotPower);
         }
+        else
+        {
+            PlaySound(noAmmoSound);
+        }
     }
 
-    private void PlaySound(AudioSource audioSource)
+    private void PlaySound(AudioClip audioClip)
     {
         if (audioSource)
-            audioSource.Play();
+            audioSource.PlayOneShot(audioClip);
     }
     
     private void SpawnMuzzleFlash()
@@ -115,37 +128,39 @@ public class Weapon: XRGrabInteractable, IWeaponActions
         
         _gunAnimator.SetFloat(_pressTriggerName, triggerValue);
         
-        if (triggerValue >= _valueToFire && _isNextShotReady)
+        if (triggerValue >= _valueToFire && _isOneClickMade)
         {
-            _gunAnimator.SetTrigger(_fireName);
             Shoot();
-            _isNextShotReady = false;
+            _isOneClickMade = false;
         }
 
-        if (triggerValue < _valueToFire && !_isNextShotReady) // Check release trigger
+        if (triggerValue < _valueToFire && !_isOneClickMade) // Check release trigger
         {
-            _isNextShotReady = true;
+            _isOneClickMade = true;
         }
     }
 
     public void AddMagazine(XRBaseInteractable interactable)
     {
-        magazine = interactable.GetComponent<Magazine>();
+        _magazine = interactable.GetComponent<IMagazine>();
+        PlaySound(insertMagazineSound);
+        _isSlideCock = false;
     }
     
     public void RemoveMagazine(XRBaseInteractable interactable)
     {
-        magazine = null;
+        _magazine = null;
+        PlaySound(pullOutMagazineSound);
     }
     
-    public void Slide()
+    public void SlideOpen()
     {
-        
+        _isSlideCock = true;
+        PlaySound(slideOpenSound);
     }
 
-    public bool Reload(int ammoCount)
+    public void SlideClose()
     {
-        throw new NotImplementedException();
+        PlaySound(slideCloseSound);
     }
-    
 }
