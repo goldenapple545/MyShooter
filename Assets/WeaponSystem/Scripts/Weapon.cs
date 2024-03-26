@@ -14,6 +14,7 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     [SerializeField] private AudioSource shootAudioSource;
     
     public long ID;
+    public XRBaseInteractor magazineSocket;
     public int ShotPower
     {
         get { return _shotPower; }
@@ -30,6 +31,7 @@ public class Weapon: XRGrabInteractable, IWeaponActions
         }
     }
 
+    private Magazine magazine;
     private string _pressTriggerName = "PressTrigger";
     private string _fireName = "Fire";
     private float _valueToFire = 0.9f;
@@ -43,8 +45,10 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     private void Start()
     {
         _gunAnimator = gameObject.GetComponent<Animator>();
-        
         _isReadyToFire = true;
+        
+        magazineSocket.onSelectEnter.AddListener(AddMagazine);
+        magazineSocket.onSelectExit.AddListener(RemoveMagazine);
     }
 
     public override void ProcessInteractable(XRInteractionUpdateOrder.UpdatePhase updatePhase)
@@ -60,14 +64,21 @@ public class Weapon: XRGrabInteractable, IWeaponActions
                     CheckPressingTrigger(activateState.value);
                 }
         }
-    } 
+    }
+
+    public bool IsReadyToFire()
+    {
+        return magazine && magazine.GetNumberOfBullets() > 0;
+    }
 
     public void Shoot()
     {
-        if (_isReadyToFire)
+        if (IsReadyToFire())
         {
             SpawnMuzzleFlash();
             PlaySound(shootAudioSource);
+            magazine.SubstractOneBullet();
+            
             GameObject bullet = Instantiate(bulletPrefab, barrelLocation.position, Quaternion.identity);
             bullet.GetComponent<Rigidbody>().AddForce(barrelLocation.forward * _shotPower);
         }
@@ -115,6 +126,21 @@ public class Weapon: XRGrabInteractable, IWeaponActions
         {
             _isNextShotReady = true;
         }
+    }
+
+    public void AddMagazine(XRBaseInteractable interactable)
+    {
+        magazine = interactable.GetComponent<Magazine>();
+    }
+    
+    public void RemoveMagazine(XRBaseInteractable interactable)
+    {
+        magazine = null;
+    }
+    
+    public void Slide()
+    {
+        
     }
 
     public bool Reload(int ammoCount)
