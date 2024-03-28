@@ -55,8 +55,8 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     {
         _gunAnimator = gameObject.GetComponent<Animator>();
         
-        magazineSocket.onSelectEnter.AddListener(AddMagazine);
-        magazineSocket.onSelectExit.AddListener(RemoveMagazine);
+        magazineSocket.onSelectEntered.AddListener(AddMagazine);
+        magazineSocket.onSelectExited.AddListener(RemoveMagazine);
     }
 
     public override void ProcessInteractable(XRInteractionUpdateOrder.UpdatePhase updatePhase)
@@ -153,13 +153,13 @@ public class Weapon: XRGrabInteractable, IWeaponActions
         PlaySound(pullOutMagazineSound);
     }
     
-    public void SlideOpen()
+    public void OnSlideOpen()
     {
         _isSlideCock = true;
         PlaySound(slideOpenSound);
     }
 
-    public void SlideClose()
+    public void OnSlideClose()
     {
         PlaySound(slideCloseSound);
     }
