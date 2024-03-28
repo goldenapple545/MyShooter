@@ -12,6 +12,7 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameObject muzzleFlashPrefab;
     [SerializeField] private GameObject casePrefab;
+    [SerializeField] private XRBaseInteractor magazineSocket;
     
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
@@ -23,37 +24,19 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     [SerializeField] private AudioClip slideCloseSound;
     
     public long ID;
-    public XRBaseInteractor magazineSocket;
-    public int ShotPower
-    {
-        get { return _shotPower; }
-        set
-        {
-            if (value > 0) _shotPower = value;
-        }
-    }
-    public float ValueToFire {
-        get { return _valueToFire; }
-        set
-        {
-            if (value > 0 && value < 1) _valueToFire = value;
-        }
-    }
 
     private IMagazine _magazine;
-    private string _pressTriggerName = "PressTrigger";
-    private string _fireName = "Fire";
     private float _valueToFire = 0.9f;
     private int _shotPower = 5000;
     private int _caseEjectPower = 100;
     private bool _canEjectCase = true;
     private bool _isSlideCock = false;
-    private Animator _gunAnimator;
+    private IGunAnimator _gunAnimator;
     private bool _isOneClickMade = true;
 
     private void Start()
     {
-        _gunAnimator = gameObject.GetComponent<Animator>();
+        _gunAnimator = gameObject.GetComponent<IGunAnimator>();
         
         magazineSocket.onSelectEntered.AddListener(AddMagazine);
         magazineSocket.onSelectExited.AddListener(RemoveMagazine);
@@ -83,18 +66,28 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     {
         if (IsReadyToFire())
         {
-            _gunAnimator.SetTrigger(_fireName);
+            InvokeFireAnimation();
             SpawnMuzzleFlash();
             PlaySound(shootSound);
-            _magazine.SubstractOneBullet();
+            CreateBullet();
             
-            GameObject bullet = Instantiate(bulletPrefab, barrelLocation.position, Quaternion.identity);
-            bullet.GetComponent<Rigidbody>().AddForce(barrelLocation.forward * _shotPower);
+            _magazine.SubstractOneBullet();
         }
         else
         {
             PlaySound(noAmmoSound);
         }
+    }
+
+    private void InvokeFireAnimation()
+    {
+        _gunAnimator.InvokeFire();
+    }
+
+    private void CreateBullet()
+    {
+        GameObject bullet = Instantiate(bulletPrefab, barrelLocation.position, Quaternion.identity);
+        bullet.GetComponent<Rigidbody>().AddForce(barrelLocation.forward * _shotPower);
     }
 
     private void PlaySound(AudioClip audioClip)
@@ -121,30 +114,45 @@ public class Weapon: XRGrabInteractable, IWeaponActions
             Destroy(shell, 5f);
         }
     }
+
+    private void UpdateTriggerValueAnimation(float triggerValue)
+    {
+        if (_gunAnimator != null)
+            _gunAnimator.SetTriggerValue(triggerValue);
+    }
     
-    // Rewrite this, split function responsability
+
     public void CheckPressingTrigger(float triggerValue)
     {
+        UpdateTriggerValueAnimation(triggerValue);
         
-        _gunAnimator.SetFloat(_pressTriggerName, triggerValue);
-        
-        if (triggerValue >= _valueToFire && _isOneClickMade)
+        if (IsTriggerPressed(triggerValue))
         {
             Shoot();
             _isOneClickMade = false;
         }
-
-        if (triggerValue < _valueToFire && !_isOneClickMade) // Check release trigger
+        if (IsTriggerReleased(triggerValue))
         {
             _isOneClickMade = true;
         }
+    }
+
+    private bool IsTriggerPressed(float triggerValue)
+    {
+        return triggerValue >= _valueToFire && _isOneClickMade;
+    }
+    
+    private bool IsTriggerReleased(float triggerValue)
+    {
+        return triggerValue < _valueToFire && !_isOneClickMade;
     }
 
     public void AddMagazine(XRBaseInteractable interactable)
     {
         _magazine = interactable.GetComponent<IMagazine>();
         PlaySound(insertMagazineSound);
-        _isSlideCock = false;
+        
+        _isSlideCock = false; // If add new magazine, need to reload slide
     }
     
     public void RemoveMagazine(XRBaseInteractable interactable)

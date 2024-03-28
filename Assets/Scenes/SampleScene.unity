@@ -2245,6 +2245,7 @@ GameObject:
   - component: {fileID: 1554993231}
   - component: {fileID: 1554993230}
   - component: {fileID: 1554993233}
+  - component: {fileID: 1554993234}
   m_Layer: 6
   m_Name: Pistol
   m_TagString: Untagged
@@ -2430,6 +2431,7 @@ MonoBehaviour:
     type: 3}
   casePrefab: {fileID: 7648517129408395770, guid: 37bf4206be4ef4e4fa1c4941d0a05b76,
     type: 3}
+  magazineSocket: {fileID: 1056182121}
   audioSource: {fileID: 1287372768}
   shootSound: {fileID: 8300000, guid: fa08ab59fd669344a977862100584194, type: 3}
   insertMagazineSound: {fileID: 8300000, guid: 9f78199ff03601049b0f8c28fd7f1870, type: 3}
@@ -2439,7 +2441,6 @@ MonoBehaviour:
   slideOpenSound: {fileID: 8300000, guid: 4bb55f11bc475e648bb86dc0513f88af, type: 3}
   slideCloseSound: {fileID: 8300000, guid: ff57aee975495014ba103e78a7976c74, type: 3}
   ID: 0
-  magazineSocket: {fileID: 1056182121}
 --- !u!4 &1554993232
 Transform:
   m_ObjectHideFlags: 0
@@ -2482,6 +2483,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1554993234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1554993228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 694c0cc0eb71a0d41b8c6cc54fc525ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunAnimator: {fileID: 0}
 --- !u!1001 &1573698429
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3320,6 +3334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5620f7026362a340b194bd81f903d45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gunAnimator: {fileID: 1554993234}
   threshold: 0.01
   target: {fileID: 819137328}
   onEnter:
@@ -3352,7 +3367,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  gunAnimator: {fileID: 1554993233}
 --- !u!114 &1801428136
 MonoBehaviour:
   m_ObjectHideFlags: 0
