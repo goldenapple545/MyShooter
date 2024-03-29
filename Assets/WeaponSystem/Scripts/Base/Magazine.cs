@@ -25,7 +25,8 @@ public abstract class Magazine : MonoBehaviour, IMagazine
 
     protected void ShowBullet(bool isVisible)
     {
-        bulletPrefab.SetActive(isVisible);
+        if (bulletPrefab)
+            bulletPrefab.SetActive(isVisible);
     }
 
     public void SubstractOneBullet()
