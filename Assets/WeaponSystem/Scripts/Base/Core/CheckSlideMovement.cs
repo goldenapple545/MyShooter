@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,8 +6,8 @@ public class CheckSlideMovement : MonoBehaviour
     [SerializeField] private GunAnimator gunAnimator;
     public float threshold = 0.02f;
     public Transform target;
-    public UnityEvent onEnter;
-    public UnityEvent onExit;
+    public UnityEvent onOpen;
+    public UnityEvent onClose;
     
     private bool _wasReached = false;
     private float _startDistance;
@@ -32,15 +29,25 @@ public class CheckSlideMovement : MonoBehaviour
         if (gunAnimator != null)
             gunAnimator.SetSlideValue(slideValue);
 
-        if (distance < threshold && !_wasReached)
+        if (IsSlideOpen(distance))
         {
-            onEnter?.Invoke();
+            onOpen?.Invoke();
             _wasReached = true;
         } 
-        else if (distance >= threshold && _wasReached)
+        else if (IsSlideClose(distance))
         {
-            onExit?.Invoke();
+            onClose?.Invoke();
             _wasReached = false;
         }
+    }
+
+    private bool IsSlideOpen(float distance)
+    {
+        return distance < threshold && !_wasReached;
+    }
+    
+    private bool IsSlideClose(float distance)
+    {
+        return _startDistance - distance < threshold && _wasReached;
     }
 }

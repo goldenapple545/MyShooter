@@ -6,7 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 [Serializable]
 public class Weapon: XRGrabInteractable, IWeaponActions
 {
-    [Header("Weapon Settings")]
+    [Header("Weapon Parts")]
     [SerializeField] private Transform barrelLocation;
     [SerializeField] private Transform shellLocation;
     [SerializeField] private GameObject bulletPrefab;
@@ -23,12 +23,14 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     [SerializeField] private AudioClip slideOpenSound;
     [SerializeField] private AudioClip slideCloseSound;
     
+    [Header("Weapon Settings")]
+    [SerializeField] private int shotPower = 5000;
+    [SerializeField] private int caseEjectPower = 100;
+    
     public long ID;
-
+    
     private IMagazine _magazine;
     private float _valueToFire = 0.9f;
-    private int _shotPower = 5000;
-    private int _caseEjectPower = 100;
     private bool _canEjectCase = true;
     private bool _isSlideCock = false;
     private IGunAnimator _gunAnimator;
@@ -87,7 +89,8 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     private void CreateBullet()
     {
         GameObject bullet = Instantiate(bulletPrefab, barrelLocation.position, Quaternion.identity);
-        bullet.GetComponent<Rigidbody>().AddForce(barrelLocation.forward * _shotPower);
+        bullet.GetComponent<Rigidbody>().AddForce(barrelLocation.forward * shotPower);
+        Destroy(bullet, 5f);
     }
 
     private void PlaySound(AudioClip audioClip)
@@ -110,7 +113,7 @@ public class Weapon: XRGrabInteractable, IWeaponActions
         if (casePrefab)
         {
             GameObject shell = Instantiate(casePrefab, shellLocation.position,  shellLocation.rotation);
-            shell.GetComponent<Rigidbody>().AddForce(shellLocation.up * _caseEjectPower);
+            shell.GetComponent<Rigidbody>().AddForce(shellLocation.up * caseEjectPower);
             Destroy(shell, 5f);
         }
     }
