@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -26,6 +27,9 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     [Header("Weapon Settings")]
     [SerializeField] private int shotPower = 5000;
     [SerializeField] private int caseEjectPower = 100;
+    [SerializeField] private bool autoFire = false;
+    [SerializeField] private int fireRate = 10;
+    
     
     public long ID;
     
@@ -35,10 +39,12 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     private bool _isSlideCock = false;
     private IGunAnimator _gunAnimator;
     private bool _isOneClickMade = true;
+    private Recoil _recoilSystem;
 
     private void Start()
     {
         _gunAnimator = gameObject.GetComponent<IGunAnimator>();
+        _recoilSystem = gameObject.GetComponent<Recoil>();
         
         magazineSocket.onSelectEntered.AddListener(AddMagazine);
         magazineSocket.onSelectExited.AddListener(RemoveMagazine);
@@ -51,10 +57,14 @@ public class Weapon: XRGrabInteractable, IWeaponActions
         if (updatePhase == XRInteractionUpdateOrder.UpdatePhase.Dynamic)
         {
             if (isSelected) 
-                if (firstInteractorSelecting is XRBaseControllerInteractor interactor)
+                if (firstInteractorSelecting is XRDirectInteractor interactor)
                 {
                     InteractionState activateState = interactor.xrController.activateInteractionState;
                     CheckPressingTrigger(activateState.value);
+                    
+                    // rewrite
+                    if (_recoilSystem)
+                        _recoilSystem.InvokeReturn(interactor.transform);
                 }
         }
     }
@@ -72,12 +82,27 @@ public class Weapon: XRGrabInteractable, IWeaponActions
             SpawnMuzzleFlash();
             PlaySound(shootSound);
             CreateBullet();
+            EjectCase();
+            
+            // rewrite
+            if (_recoilSystem)
+                _recoilSystem.RecoilFire();
             
             _magazine.SubstractOneBullet();
         }
         else
         {
             PlaySound(noAmmoSound);
+        }
+    }
+
+    IEnumerator AutoFire()
+    {
+        while (true)
+        {
+            Shoot();
+            yield return new WaitForSeconds(1f / fireRate);
+            
         }
     }
 
@@ -128,26 +153,33 @@ public class Weapon: XRGrabInteractable, IWeaponActions
     public void CheckPressingTrigger(float triggerValue)
     {
         UpdateTriggerValueAnimation(triggerValue);
-        
-        if (IsTriggerPressed(triggerValue))
+        if (IsTriggerPressed(triggerValue) && _isOneClickMade)
         {
-            Shoot();
+            if (autoFire)
+            {
+                StartCoroutine(AutoFire()); 
+            }
+            else
+            {
+                Shoot();
+            }
             _isOneClickMade = false;
         }
-        if (IsTriggerReleased(triggerValue))
+        if (IsTriggerReleased(triggerValue) && !_isOneClickMade)
         {
+            StopAllCoroutines();
             _isOneClickMade = true;
         }
     }
 
     private bool IsTriggerPressed(float triggerValue)
     {
-        return triggerValue >= _valueToFire && _isOneClickMade;
+        return triggerValue >= _valueToFire;
     }
     
     private bool IsTriggerReleased(float triggerValue)
     {
-        return triggerValue < _valueToFire && !_isOneClickMade;
+        return triggerValue < _valueToFire;
     }
 
     public void AddMagazine(XRBaseInteractable interactable)
