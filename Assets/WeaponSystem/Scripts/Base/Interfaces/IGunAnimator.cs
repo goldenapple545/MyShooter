@@ -1,6 +1,9 @@
-public interface IGunAnimator
+namespace WeaponSystem.Scripts.Base.Interfaces
 {
-    void SetTriggerValue(float triggerValue);
-    void SetSlideValue(float slideValue);
-    void InvokeFire();
+    public interface IGunAnimator
+    {
+        void SetTriggerValue(float triggerValue);
+        void SetSlideValue(float slideValue);
+        void InvokeFire();
+    }
 }

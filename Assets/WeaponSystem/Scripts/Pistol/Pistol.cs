@@ -1,6 +1,9 @@
-using UnityEngine;
+using WeaponSystem.Scripts.Base;
 
-public class Pistol : Weapon
+namespace WeaponSystem.Scripts.Pistol
 {
+    public class Pistol : Weapon
+    {
     
+    }
 }

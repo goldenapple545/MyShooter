@@ -1,10 +1,16 @@
-public class RifleMagazine : Magazine
+using WeaponSystem.Scripts.Base;
+using WeaponSystem.Scripts.Base.Interfaces;
+
+namespace WeaponSystem.Scripts.Rifle
 {
-    private void Start()
+    public class RifleMagazine : Magazine
     {
-        MagazineType = MagazineType.Rifle;
-        NumberOfBullets = 30;
-        CurrentNumberOfBullets = NumberOfBullets;
+        private void Start()
+        {
+            MagazineType = MagazineType.Rifle;
+            NumberOfBullets = 30;
+            CurrentNumberOfBullets = NumberOfBullets;
+        }
     }
 }
 

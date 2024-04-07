@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
+using WeaponSystem.Scripts.Base;
 
-public class Rifle : Weapon
+namespace WeaponSystem.Scripts.Rifle
 {
+    public class Rifle : Weapon
+    {
     
+    }
 }

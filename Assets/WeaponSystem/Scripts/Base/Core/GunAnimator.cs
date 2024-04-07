@@ -1,32 +1,33 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using WeaponSystem.Scripts.Base.Interfaces;
 
-public class GunAnimator : MonoBehaviour, IGunAnimator
+namespace WeaponSystem.Scripts.Base.Core
 {
-    public Animator gunAnimator;
-
-    private string _pressTriggerName = "PressTrigger";
-    private string _fireName = "Fire";
-    private string _moveSliderName = "MoveSlider";
-    private void Awake()
+    public class GunAnimator : MonoBehaviour, IGunAnimator
     {
-        gunAnimator = GetComponent<Animator>();
-    }
+        public Animator gunAnimator;
 
-    public void SetTriggerValue(float triggerValue)
-    {
-        gunAnimator.SetFloat(_pressTriggerName, triggerValue);
-    }
+        private string _pressTriggerName = "PressTrigger";
+        private string _fireName = "Fire";
+        private string _moveSliderName = "MoveSlider";
+        private void Awake()
+        {
+            gunAnimator = GetComponent<Animator>();
+        }
 
-    public void SetSlideValue(float slideValue)
-    {
-        gunAnimator.SetFloat(_moveSliderName, slideValue);
-    }
+        public void SetTriggerValue(float triggerValue)
+        {
+            gunAnimator.SetFloat(_pressTriggerName, triggerValue);
+        }
 
-    public void InvokeFire()
-    {
-        gunAnimator.SetTrigger(_fireName);
+        public void SetSlideValue(float slideValue)
+        {
+            gunAnimator.SetFloat(_moveSliderName, slideValue);
+        }
+
+        public void InvokeFire()
+        {
+            gunAnimator.SetTrigger(_fireName);
+        }
     }
 }
